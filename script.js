@@ -2,11 +2,18 @@ let can = document.querySelector(".canvas");
 let btn = document.querySelector("button");
 let ctx = can.getContext("2d");
 let isDrawing = false;
+let isErasing = false;
+let lineWidth = 5;
+let strokeColor = "purple";
 
 window.addEventListener("load", () => {
+  resizeCanvas();
+});
+
+let resizeCanvas = () => {
   can.width = window.innerWidth;
   can.height = window.innerHeight;
-});
+};
 
 let getClientPosition = (e) => {
   return {
@@ -28,7 +35,8 @@ let draw = (e) => {
   if (!isDrawing) return;
   let { x, y } = getClientPosition(e);
   ctx.lineTo(x, y);
-  ctx.strokeStyle = "purple";
+  ctx.strokeStyle = isErasing ? "white" : strokeColor;
+  ctx.lineWidth = isErasing ? 20 : lineWidth;
   ctx.stroke();
 };
 
@@ -41,19 +49,16 @@ let clearCanvas = () => {
   ctx.clearRect(0, 0, can.width, can.height);
 };
 
+let toggleDrawingMode = () => {
+  isErasing = !isErasing;
+  btn.textContent = isErasing ? "Drawing Mode" : "Erasing Mode";
+};
+
+btn.addEventListener("click", toggleDrawingMode);
 btn.addEventListener("dblclick", (e) => {
   e.preventDefault();
   clearCanvas();
   btn.blur();
-});
-
-
-btn.addEventListener("click", () => {
-  if (isDrawing) {
-    stopDrawing(event);
-  } else {
-    startDrawing(event);
-  }
 });
 
 can.addEventListener("mousedown", startDrawing);
@@ -66,4 +71,19 @@ can.addEventListener("touchmove", draw);
 can.addEventListener("touchend", stopDrawing);
 can.addEventListener("touchcancel", stopDrawing);
 
+let debouncedResize = debounce(() => {
+  resizeCanvas();
+}, 200);
+
+window.addEventListener("resize", debouncedResize);
+
 can.addEventListener("dblclick", clearCanvas);
+
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}

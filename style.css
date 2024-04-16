@@ -43,4 +43,16 @@ button:focus {
   outline: none;
   background-color: aquamarine;
 }
+@media screen and (max-width: 600px) {
 
+  #canvas {
+    width: 90%;
+    height: 80%;
+  }
+
+  button {
+    width: 20%;
+    height: 5%;
+  }
+    
+}
