@@ -1,6 +1,6 @@
 let can = document.querySelector(".canvas");
+let btn = document.querySelector("button");
 let ctx = can.getContext("2d");
-
 let isDrawing = false;
 
 window.addEventListener("load", () => {
@@ -16,8 +16,8 @@ let startDrawing = (e) => {
 
 let draw = (e) => {
   if (!isDrawing) return;
-    ctx.lineTo(e.clientX, e.clientY);
-    ctx.strokeStyle = "purple";
+  ctx.lineTo(e.clientX, e.clientY);
+  ctx.strokeStyle = "purple";
   ctx.stroke();
 };
 
@@ -29,9 +29,16 @@ let clearCanvas = () => {
   ctx.clearRect(0, 0, can.width, can.height);
 };
 
+btn.addEventListener("click", () => {
+  if (isDrawing) {
+    stopDrawing();
+  } else {
+    startDrawing(event);
+  }
+});
+
 can.addEventListener("mousedown", startDrawing);
 can.addEventListener("mousemove", draw);
 can.addEventListener("mouseup", stopDrawing);
 can.addEventListener("mouseout", stopDrawing);
-
 can.addEventListener("dblclick", clearCanvas);
