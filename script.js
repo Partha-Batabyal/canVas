@@ -11,12 +11,18 @@ window.addEventListener("load", () => {
 let startDrawing = (e) => {
   isDrawing = true;
   ctx.beginPath();
-  ctx.moveTo(e.clientX, e.clientY);
+  ctx.moveTo(
+    e.clientX || e.touches[0].clientX,
+    e.clientY || e.touches[0].clientY
+  );
 };
 
 let draw = (e) => {
   if (!isDrawing) return;
-  ctx.lineTo(e.clientX, e.clientY);
+  ctx.lineTo(
+    e.clientX || e.touches[0].clientX,
+    e.clientY || e.touches[0].clientY
+  );
   ctx.strokeStyle = "purple";
   ctx.stroke();
 };
@@ -41,4 +47,18 @@ can.addEventListener("mousedown", startDrawing);
 can.addEventListener("mousemove", draw);
 can.addEventListener("mouseup", stopDrawing);
 can.addEventListener("mouseout", stopDrawing);
+
+can.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  startDrawing(e);
+});
+
+can.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+  draw(e);
+});
+
+can.addEventListener("touchend", stopDrawing);
+can.addEventListener("touchcancel", stopDrawing);
+
 can.addEventListener("dblclick", clearCanvas);
