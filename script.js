@@ -8,26 +8,32 @@ window.addEventListener("load", () => {
   can.height = window.innerHeight;
 });
 
+let getClientPosition = (e) => {
+  return {
+    x: e.clientX || e.touches[0].clientX,
+    y: e.clientY || e.touches[0].clientY,
+  };
+};
+
 let startDrawing = (e) => {
+  e.preventDefault();
   isDrawing = true;
   ctx.beginPath();
-  ctx.moveTo(
-    e.clientX || e.touches[0].clientX,
-    e.clientY || e.touches[0].clientY
-  );
+  let { x, y } = getClientPosition(e);
+  ctx.moveTo(x, y);
 };
 
 let draw = (e) => {
+  e.preventDefault();
   if (!isDrawing) return;
-  ctx.lineTo(
-    e.clientX || e.touches[0].clientX,
-    e.clientY || e.touches[0].clientY
-  );
+  let { x, y } = getClientPosition(e);
+  ctx.lineTo(x, y);
   ctx.strokeStyle = "purple";
   ctx.stroke();
 };
 
-let stopDrawing = () => {
+let stopDrawing = (e) => {
+  e.preventDefault();
   isDrawing = false;
 };
 
@@ -35,9 +41,16 @@ let clearCanvas = () => {
   ctx.clearRect(0, 0, can.width, can.height);
 };
 
+btn.addEventListener("dblclick", (e) => {
+  e.preventDefault();
+  clearCanvas();
+  btn.blur();
+});
+
+
 btn.addEventListener("click", () => {
   if (isDrawing) {
-    stopDrawing();
+    stopDrawing(event);
   } else {
     startDrawing(event);
   }
@@ -48,16 +61,8 @@ can.addEventListener("mousemove", draw);
 can.addEventListener("mouseup", stopDrawing);
 can.addEventListener("mouseout", stopDrawing);
 
-can.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  startDrawing(e);
-});
-
-can.addEventListener("touchmove", (e) => {
-  e.preventDefault();
-  draw(e);
-});
-
+can.addEventListener("touchstart", startDrawing);
+can.addEventListener("touchmove", draw);
 can.addEventListener("touchend", stopDrawing);
 can.addEventListener("touchcancel", stopDrawing);
 
