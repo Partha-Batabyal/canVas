@@ -1,9 +1,11 @@
 let can = document.querySelector(".canvas");
 let btn = document.querySelector("button");
+let color_Change = document.querySelector("#pick");
 let ctx = can.getContext("2d");
 let isDrawing = false;
 let isErasing = false;
 let lineWidth = 5;
+let strokeWidth = 2;
 let strokeColor = "purple";
 
 window.addEventListener("load", () => {
@@ -11,8 +13,8 @@ window.addEventListener("load", () => {
 });
 
 let resizeCanvas = () => {
-  can.width = window.innerWidth;
-  can.height = window.innerHeight;
+  can.width = can.clientWidth;
+  can.height = can.clientHeight;
 };
 
 let getClientPosition = (e) => {
@@ -36,7 +38,7 @@ let draw = (e) => {
   let { x, y } = getClientPosition(e);
   ctx.lineTo(x, y);
   ctx.strokeStyle = isErasing ? "white" : strokeColor;
-  ctx.lineWidth = isErasing ? 20 : lineWidth;
+  ctx.lineWidth = isErasing ? 20 : strokeWidth;
   ctx.stroke();
 };
 
@@ -78,6 +80,10 @@ let debouncedResize = debounce(() => {
 window.addEventListener("resize", debouncedResize);
 
 can.addEventListener("dblclick", clearCanvas);
+
+color_Change.addEventListener("input", (e) => {
+  strokeColor = e.target.value;
+});
 
 function debounce(func, wait) {
   let timeout;
